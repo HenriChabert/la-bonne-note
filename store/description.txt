@@ -1,0 +1,21 @@
+See Google Maps ratings directly on Deliveroo, Uber Eats, and TheFork.
+
+La Bonne Note adds Google Maps ratings and review counts to every restaurant card on your favorite food platforms. No more switching between tabs to check if a restaurant is actually good — the info is right there.
+
+FEATURES:
+• Google Maps rating and review count displayed on each restaurant card
+• Click any rating badge to open the restaurant on Google Maps
+• Filter by minimum rating or review count (hide or dim low-rated places)
+• Change filters live — no page reload needed
+• Results cached for 7 days to save API quota
+• Works on Deliveroo.fr, Uber Eats, and TheFork (LaFourchette)
+
+SETUP:
+1. Get a free Google Places API key from Google Cloud Console
+2. Click the extension icon and paste your API key
+3. Browse any supported platform — ratings appear automatically
+
+Google provides $200/month of free API credit, which covers thousands of lookups. With caching, you'll rarely hit the limit.
+
+PRIVACY:
+This extension does not collect any personal data. Restaurant names are sent to the Google Places API solely to retrieve ratings. Your API key is stored locally in your browser.

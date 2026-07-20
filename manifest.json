@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "La Bonne Note",
+  "version": "1.0.0",
+  "description": "Show Google Maps ratings on food delivery platforms",
+  "permissions": ["storage"],
+  "host_permissions": ["https://places.googleapis.com/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.deliveroo.fr/*", "*://*.ubereats.com/*", "*://*.thefork.fr/*", "*://*.thefork.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
