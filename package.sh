@@ -4,10 +4,12 @@ set -euo pipefail
 
 NAME="la-bonne-note"
 VERSION=$(grep '"version"' manifest.json | head -1 | sed 's/.*"\([0-9.]*\)".*/\1/')
-OUTFILE="${NAME}-v${VERSION}.zip"
+DISTDIR="dist"
+OUTFILE="${DISTDIR}/${NAME}-v${VERSION}.zip"
 
 echo "Packaging ${NAME} v${VERSION}..."
 
+mkdir -p "$DISTDIR"
 rm -f "$OUTFILE"
 
 zip -r "$OUTFILE" \
