@@ -3,13 +3,21 @@ import type { RatingResult } from "./types";
 // Cache parsed SVG icons to avoid re-parsing the same string
 const iconCache = new Map<string, Node>();
 
-function getIconNode(svgString: string): Node {
-  let node = iconCache.get(svgString);
+function getIconNode(iconValue: string): Node {
+  let node = iconCache.get(iconValue);
   if (!node) {
-    const parsed = new DOMParser().parseFromString(svgString, "image/svg+xml");
-    const svg = parsed.documentElement;
-    node = svg instanceof SVGElement ? svg : document.createTextNode("");
-    iconCache.set(svgString, node);
+    if (iconValue.trimStart().startsWith("<")) {
+      const parsed = new DOMParser().parseFromString(iconValue, "image/svg+xml");
+      const svg = parsed.documentElement;
+      node = svg instanceof SVGElement ? svg : document.createTextNode("");
+    } else {
+      const img = document.createElement("img");
+      img.src = iconValue;
+      img.width = 14;
+      img.height = 14;
+      node = img;
+    }
+    iconCache.set(iconValue, node);
   }
   return node.cloneNode(true);
 }

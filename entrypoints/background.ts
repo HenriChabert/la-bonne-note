@@ -5,14 +5,16 @@ import { log, loadLogLevel, watchLogLevel } from "@/lib/logger";
 import type { LookupRequest, RatingResult } from "@/lib/types";
 
 export default defineBackground(async () => {
-  await loadLogLevel();
+  await loadLogLevel().catch(() => {});
   watchLogLevel();
 
   log.info("Background started", { providers: providers.map((p) => p.id) });
 
   chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     if (msg.type === "LOOKUP") {
-      handleLookupAll(msg.request as LookupRequest).then(sendResponse);
+      handleLookupAll(msg.request as LookupRequest)
+        .then(sendResponse)
+        .catch(() => sendResponse([]));
       return true;
     }
   });
@@ -26,7 +28,7 @@ async function handleLookupAll(request: LookupRequest): Promise<RatingResult[]> 
   const matching = getProvidersForType(request.resourceType);
   if (matching.length === 0) {
     log.warn("No providers found for resource type", request.resourceType);
-    return [errorResult("unknown", "unknown", "", "NO_PROVIDER")];
+    return [];
   }
 
   log.debug(`Lookup "${request.name}"`, {
@@ -45,19 +47,34 @@ async function lookupSingle(
   provider: typeof providers[number],
   request: LookupRequest,
 ): Promise<RatingResult> {
+  try {
+    return await doLookup(provider, request);
+  } catch (err) {
+    log.error(`${provider.name} lookup failed for "${request.name}"`, err);
+    return errorResult(provider.id, provider.name, provider.icon, "NETWORK_ERROR");
+  }
+}
+
+async function doLookup(
+  provider: typeof providers[number],
+  request: LookupRequest,
+): Promise<RatingResult> {
   const key = cacheKey(provider.id, request.name, request.city);
 
   // Check cache
-  const cached = await chrome.storage.local.get(key);
-  if (cached[key]) {
-    const entry = cached[key] as { data: RatingResult; ts: number };
-    if (Date.now() - entry.ts < CACHE_TTL_MS) {
-      // Backfill providerId for entries cached before this field existed
-      entry.data.providerId ??= provider.id;
-      log.debug(`Cache hit "${request.name}" [${provider.id}]`, { rating: entry.data.rating });
-      return entry.data;
+  try {
+    const cached = await chrome.storage.local.get(key);
+    if (cached[key]) {
+      const entry = cached[key] as { data: RatingResult; ts: number };
+      if (Date.now() - entry.ts < CACHE_TTL_MS) {
+        entry.data.providerId ??= provider.id;
+        log.debug(`Cache hit "${request.name}" [${provider.id}]`, { rating: entry.data.rating });
+        return entry.data;
+      }
+      log.debug(`Cache expired "${request.name}" [${provider.id}]`);
     }
-    log.debug(`Cache expired "${request.name}" [${provider.id}]`);
+  } catch {
+    // Cache read failed — proceed without cache
   }
 
   // Get API key (skip for providers that don't need one)
@@ -71,19 +88,22 @@ async function lookupSingle(
     }
   }
 
+  const result = await provider.lookup(request, apiKey);
+
+  log.info(`${provider.name} lookup "${request.name}"`, {
+    rating: result.rating,
+    reviews: result.userRatingCount,
+    error: result.error,
+  });
+
+  // Cache result (best-effort)
   try {
-    const result = await provider.lookup(request, apiKey);
-    log.info(`${provider.name} lookup "${request.name}"`, {
-      rating: result.rating,
-      reviews: result.userRatingCount,
-      error: result.error,
-    });
     await chrome.storage.local.set({
       [key]: { data: result, ts: Date.now() },
     });
-    return result;
-  } catch (err) {
-    log.error(`${provider.name} lookup failed for "${request.name}"`, err);
-    return errorResult(provider.id, provider.name, provider.icon, "NETWORK_ERROR");
+  } catch {
+    // Cache write failed — non-fatal
   }
+
+  return result;
 }

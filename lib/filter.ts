@@ -49,7 +49,7 @@ export function watchFilterChanges(onUpdate: () => void): void {
       }
       if (key.startsWith(FILTER_STORAGE_PREFIX)) {
         // Re-parse on any filter change
-        loadFilterSettings().then(onUpdate);
+        loadFilterSettings().then(onUpdate).catch(() => {});
         return;
       }
     }

@@ -1,21 +1,19 @@
 import type { RatingProvider, LookupRequest, RatingResult } from "../types";
-
-// Google Maps pin icon (simplified)
-const ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" fill="#EA4335"/></svg>`;
+import ICON from "@/assets/icons/google_maps.ico";
 
 export const googleMaps: RatingProvider = {
   id: "google-maps",
   name: "Google Maps",
   icon: ICON,
   maxRating: 5,
-  supportedTypes: ["restaurant"],
+  supportedTypes: ["restaurant", "hotel"],
   apiKeySettingName: "placesApiKey",
   apiKeyPlaceholder: "AIza...",
 
   async lookup(query: LookupRequest, apiKey: string): Promise<RatingResult> {
     const textQuery = query.address
       ? `${query.name} ${query.address}`
-      : `${query.name} restaurant ${query.city}`;
+      : `${query.name} ${query.resourceType} ${query.city}`;
 
     const res = await fetch(
       "https://places.googleapis.com/v1/places:searchText",

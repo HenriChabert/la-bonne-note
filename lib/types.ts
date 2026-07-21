@@ -1,4 +1,4 @@
-export type ResourceType = "restaurant" | "movie";
+export type ResourceType = "restaurant" | "movie" | "hotel";
 
 export interface SiteAdapter {
   id: string;

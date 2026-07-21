@@ -5,12 +5,13 @@ import { netflix } from "./sites/netflix";
 import { disneyplus } from "./sites/disneyplus";
 import { canalplus } from "./sites/canalplus";
 import { primevideo } from "./sites/primevideo";
+import { booking } from "./sites/booking";
 import { googleMaps } from "./providers/google-maps";
 import { allocine } from "./providers/allocine";
 import { tmdb } from "./providers/tmdb";
 import type { SiteAdapter, RatingProvider, ProviderMeta, ResourceType } from "./types";
 
-export const sites: SiteAdapter[] = [deliveroo, ubereats, thefork, netflix, disneyplus, canalplus, primevideo];
+export const sites: SiteAdapter[] = [deliveroo, ubereats, thefork, netflix, disneyplus, canalplus, primevideo, booking];
 
 export const providers: RatingProvider[] = [googleMaps, allocine, tmdb];
 

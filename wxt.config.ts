@@ -1,6 +1,9 @@
 import { defineConfig } from "wxt";
 
 export default defineConfig({
+  runner: {
+    openBrowser: false,
+  },
   manifest: {
     name: "La Bonne Note",
     version: "1.1.0",
