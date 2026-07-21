@@ -27,8 +27,16 @@ export function createBadge(data: RatingResult): HTMLElement {
   badge.className = "lbn-badge";
 
   if (data.error === "NO_API_KEY") {
-    badge.classList.add("lbn-badge--error");
-    badge.textContent = "Set API key in extension";
+    badge.classList.add("lbn-badge--na");
+    if (data.providerIcon) {
+      const iconEl = document.createElement("span");
+      iconEl.className = "lbn-provider-icon";
+      iconEl.appendChild(getIconNode(data.providerIcon));
+      badge.appendChild(iconEl);
+    }
+    const text = document.createElement("span");
+    text.textContent = "Disconnected";
+    badge.appendChild(text);
     return badge;
   }
 

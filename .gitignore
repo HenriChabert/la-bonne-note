@@ -4,3 +4,9 @@ dist/
 .wxt/
 .DS_Store
 node_modules/
+
+# Override global gitignore to track Claude skills
+!.claude/
+.claude/*
+!.claude/skills/
+!.claude/skills/**

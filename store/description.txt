@@ -1,22 +1,23 @@
-See external ratings directly on Deliveroo, Uber Eats, TheFork, Netflix, Disney+, Canal+, and Amazon Prime Video.
+See external ratings directly on Deliveroo, Uber Eats, TheFork, Netflix, Disney+, Canal+, Amazon Prime Video, and Booking.com.
 
-La Bonne Note overlays ratings from Google Maps, Allocine, and TMDB on your favorite food delivery and streaming platforms. No more switching between tabs to check if a restaurant or movie is actually good — the info is right there.
+La Bonne Note overlays ratings from Google Maps, Allocine, and TMDB on your favorite food delivery, streaming, and hotel booking platforms. No more switching between tabs to check if a restaurant, movie, or hotel is actually good — the info is right there.
 
 FEATURES:
 - Ratings from multiple providers displayed on every card
-- Google Maps for restaurants, Allocine and TMDB for movies and TV shows
+- Google Maps for restaurants and hotels, Allocine and TMDB for movies and TV shows
 - Click any rating badge to open the source page
 - Filter by minimum rating or review count per provider (hide or dim low-rated items)
 - Change filters live — no page reload needed
 - Results cached for 7 days to save API quota
 
 SUPPORTED PLATFORMS:
-- Food delivery: Deliveroo.fr, Uber Eats, TheFork (LaFourchette)
+- Food delivery: Deliveroo, Uber Eats, TheFork (LaFourchette)
 - Streaming: Netflix, Disney+, Canal+, Amazon Prime Video
+- Hotels: Booking.com
 
 SETUP:
 1. Click the extension icon and go to "API Key Settings"
-2. Enter your Google Places API key (for restaurant ratings) and/or TMDB API key (for movie ratings)
+2. Enter your Google Places API key (for restaurant and hotel ratings) and/or TMDB API key (for movie ratings)
 3. Allocine works without an API key
 4. Browse any supported platform — ratings appear automatically
 

@@ -14,98 +14,30 @@ Default to using Bun instead of Node.js.
 - Use `bunx <package> <command>` instead of `npx <package> <command>`
 - Bun automatically loads .env, so don't use dotenv.
 
-## APIs
+## Project: La Bonne Note
 
-- `Bun.serve()` supports WebSockets, HTTPS, and routes. Don't use `express`.
-- `bun:sqlite` for SQLite. Don't use `better-sqlite3`.
-- `Bun.redis` for Redis. Don't use `ioredis`.
-- `Bun.sql` for Postgres. Don't use `pg` or `postgres.js`.
-- `WebSocket` is built-in. Don't use `ws`.
-- Prefer `Bun.file` over `node:fs`'s readFile/writeFile
-- Bun.$`ls` instead of execa.
+Chrome extension (WXT + TypeScript) that overlays external ratings on food delivery, streaming, and hotel booking platforms.
 
-## Testing
+### Key conventions
 
-Use `bun test` to run tests.
+- Sites go in `lib/sites/<name>.ts` implementing `SiteAdapter` (from `lib/types.ts`)
+- Providers go in `lib/providers/<name>.ts` implementing `RatingProvider` (from `lib/types.ts`)
+- Both are registered in `lib/registry.ts`
+- New site URL patterns must be added to `entrypoints/content.ts` `matches` array
+- New provider API domains must be added to `wxt.config.ts` `host_permissions`
+- Provider icons: inline SVG string or file import from `assets/icons/` (SVG with `?raw`, ICO/PNG without)
+- After adding a site or provider, update `README.md` and `wxt.config.ts` description
 
-```ts#index.test.ts
-import { test, expect } from "bun:test";
+### Skills
 
-test("hello world", () => {
-  expect(1).toBe(1);
-});
+- `.claude/skills/add-site.md` — step-by-step guide for adding a new site adapter
+- `.claude/skills/add-provider.md` — step-by-step guide for adding a new rating provider
+
+### Development
+
+```bash
+make dev       # Start dev mode (no browser auto-open)
+make build     # Production build
+make package   # Create distributable zip
+make clean     # Remove build artifacts
 ```
-
-## Frontend
-
-Use HTML imports with `Bun.serve()`. Don't use `vite`. HTML imports fully support React, CSS, Tailwind.
-
-Server:
-
-```ts#index.ts
-import index from "./index.html"
-
-Bun.serve({
-  routes: {
-    "/": index,
-    "/api/users/:id": {
-      GET: (req) => {
-        return new Response(JSON.stringify({ id: req.params.id }));
-      },
-    },
-  },
-  // optional websocket support
-  websocket: {
-    open: (ws) => {
-      ws.send("Hello, world!");
-    },
-    message: (ws, message) => {
-      ws.send(message);
-    },
-    close: (ws) => {
-      // handle close
-    }
-  },
-  development: {
-    hmr: true,
-    console: true,
-  }
-})
-```
-
-HTML files can import .tsx, .jsx or .js files directly and Bun's bundler will transpile & bundle automatically. `<link>` tags can point to stylesheets and Bun's CSS bundler will bundle.
-
-```html#index.html
-<html>
-  <body>
-    <h1>Hello, world!</h1>
-    <script type="module" src="./frontend.tsx"></script>
-  </body>
-</html>
-```
-
-With the following `frontend.tsx`:
-
-```tsx#frontend.tsx
-import React from "react";
-import { createRoot } from "react-dom/client";
-
-// import .css files directly and it works
-import './index.css';
-
-const root = createRoot(document.body);
-
-export default function Frontend() {
-  return <h1>Hello, world!</h1>;
-}
-
-root.render(<Frontend />);
-```
-
-Then, run index.ts
-
-```sh
-bun --hot ./index.ts
-```
-
-For more information, read the Bun API docs in `node_modules/bun-types/docs/**.mdx`.

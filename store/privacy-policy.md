@@ -4,7 +4,7 @@
 
 ## Overview
 
-La Bonne Note is a browser extension that displays external ratings on food delivery and streaming platforms. This policy explains what data the extension accesses and how it is used.
+La Bonne Note is a browser extension that displays external ratings on food delivery, streaming, and hotel booking platforms. This policy explains what data the extension accesses and how it is used.
 
 ## Data Collection
 
@@ -16,7 +16,7 @@ The extension processes the following data, all of which stays on your device or
 
 | Data | Purpose | Destination |
 |------|---------|-------------|
-| Restaurant/movie names | Sent to rating providers to fetch ratings | Google, Allocine, TMDB servers |
+| Restaurant/movie/hotel names | Sent to rating providers to fetch ratings | Google, Allocine, TMDB servers |
 | API keys (Google Places, TMDB) | Used to authenticate API requests | Google, TMDB servers |
 | Cached ratings | Stored locally to reduce API calls | Your browser (chrome.storage.local) |
 | Filter settings | Stored locally for your preferences | Your browser (chrome.storage.sync) |

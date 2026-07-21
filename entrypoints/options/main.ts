@@ -27,8 +27,25 @@ for (const provider of providersMeta) {
     input.id = `apiKey-${provider.id}`;
     input.placeholder = provider.apiKeyPlaceholder ?? "";
 
+    const wrapper = document.createElement("div");
+    wrapper.className = "input-wrapper";
+
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "toggle-visibility";
+    toggle.textContent = "\u{1F441}";
+    toggle.title = "Show/hide API key";
+    toggle.addEventListener("click", () => {
+      const visible = input.type === "text";
+      input.type = visible ? "password" : "text";
+      toggle.textContent = visible ? "\u{1F441}" : "\u{1F441}\u{200D}\u{1F5E8}";
+    });
+
+    wrapper.appendChild(input);
+    wrapper.appendChild(toggle);
+
     field.appendChild(label);
-    field.appendChild(input);
+    field.appendChild(wrapper);
 
     const helpUrl = helpLinks[provider.apiKeySettingName];
     if (helpUrl) {
