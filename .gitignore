@@ -1,4 +1,6 @@
 examples/
 dist/
+.output/
+.wxt/
 .DS_Store
 node_modules/

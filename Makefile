@@ -1,14 +1,13 @@
-.PHONY: package clean
+.PHONY: dev build package clean
 
-VERSION := $(shell grep '"version"' manifest.json | head -1 | sed 's/.*"\([0-9.]*\)".*/\1/')
+dev:
+	bun run dev
+
+build:
+	bun run build
 
 package:
-	@mkdir -p dist
-	@rm -f dist/*.zip
-	@zip -r dist/la-bonne-note-v$(VERSION).zip \
-		manifest.json background.js content.js styles.css \
-		popup.html popup.js icons/*.png -x "*.DS_Store"
-	@echo "Created: dist/la-bonne-note-v$(VERSION).zip ($$(du -h dist/la-bonne-note-v$(VERSION).zip | cut -f1))"
+	bun run zip
 
 clean:
-	rm -rf dist
+	rm -rf .output .wxt dist

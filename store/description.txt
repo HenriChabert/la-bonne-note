@@ -1,21 +1,24 @@
-See Google Maps ratings directly on Deliveroo, Uber Eats, and TheFork.
+See external ratings directly on Deliveroo, Uber Eats, TheFork, Netflix, Disney+, Canal+, and Amazon Prime Video.
 
-La Bonne Note adds Google Maps ratings and review counts to every restaurant card on your favorite food platforms. No more switching between tabs to check if a restaurant is actually good — the info is right there.
+La Bonne Note overlays ratings from Google Maps, Allocine, and TMDB on your favorite food delivery and streaming platforms. No more switching between tabs to check if a restaurant or movie is actually good — the info is right there.
 
 FEATURES:
-• Google Maps rating and review count displayed on each restaurant card
-• Click any rating badge to open the restaurant on Google Maps
-• Filter by minimum rating or review count (hide or dim low-rated places)
-• Change filters live — no page reload needed
-• Results cached for 7 days to save API quota
-• Works on Deliveroo.fr, Uber Eats, and TheFork (LaFourchette)
+- Ratings from multiple providers displayed on every card
+- Google Maps for restaurants, Allocine and TMDB for movies and TV shows
+- Click any rating badge to open the source page
+- Filter by minimum rating or review count per provider (hide or dim low-rated items)
+- Change filters live — no page reload needed
+- Results cached for 7 days to save API quota
+
+SUPPORTED PLATFORMS:
+- Food delivery: Deliveroo.fr, Uber Eats, TheFork (LaFourchette)
+- Streaming: Netflix, Disney+, Canal+, Amazon Prime Video
 
 SETUP:
-1. Get a free Google Places API key from Google Cloud Console
-2. Click the extension icon and paste your API key
-3. Browse any supported platform — ratings appear automatically
-
-Google provides $200/month of free API credit, which covers thousands of lookups. With caching, you'll rarely hit the limit.
+1. Click the extension icon and go to "API Key Settings"
+2. Enter your Google Places API key (for restaurant ratings) and/or TMDB API key (for movie ratings)
+3. Allocine works without an API key
+4. Browse any supported platform — ratings appear automatically
 
 PRIVACY:
-This extension does not collect any personal data. Restaurant names are sent to the Google Places API solely to retrieve ratings. Your API key is stored locally in your browser.
+This extension does not collect any personal data. Item names are sent to rating providers solely to fetch ratings. API keys are stored locally in your browser.

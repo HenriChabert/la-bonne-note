@@ -1,0 +1,19 @@
+{
+  "name": "la-bonne-note",
+  "version": "1.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt build",
+    "zip": "wxt zip",
+    "postinstall": "wxt prepare"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "chrome-types": "^0.1.435",
+    "wxt": "^0.20.27"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

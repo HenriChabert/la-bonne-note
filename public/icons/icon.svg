@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Rounded square background -->
+  <rect x="8" y="8" width="112" height="112" rx="24" ry="24" fill="#00CCBC"/>
+  <rect x="8" y="8" width="112" height="112" rx="24" ry="24" fill="none" stroke="#009e91" stroke-width="3"/>
+  <!-- Star -->
+  <polygon points="64,26 75.6,49.5 101,53.2 82.5,71.2 87.2,96.5 64,84.3 40.8,96.5 45.5,71.2 27,53.2 52.4,49.5" fill="#FBBC04"/>
+  <polygon points="64,26 75.6,49.5 101,53.2 82.5,71.2 87.2,96.5 64,84.3 40.8,96.5 45.5,71.2 27,53.2 52.4,49.5" fill="none" stroke="#E8A600" stroke-width="2"/>
+</svg>
