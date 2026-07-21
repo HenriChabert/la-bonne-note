@@ -17,9 +17,12 @@ SUPPORTED PLATFORMS:
 
 SETUP:
 1. Click the extension icon and go to "API Key Settings"
-2. Enter your Google Places API key (for restaurant and hotel ratings) and/or TMDB API key (for movie ratings)
-3. Allocine works without an API key
-4. Browse any supported platform — ratings appear automatically
+2. Enter your Google Places API key (for restaurant and hotel ratings): https://console.cloud.google.com/apis/credentials
+3. Enter your TMDB API Read Access Token (for movie ratings): https://www.themoviedb.org/settings/api
+4. Allocine works without an API key
+5. Browse any supported platform — ratings appear automatically
+
+Full setup guide: https://github.com/HenriChabert/la-bonne-note/blob/main/docs/provider-setup.md
 
 PRIVACY:
 This extension does not collect any personal data. Item names are sent to rating providers solely to fetch ratings. API keys are stored locally in your browser.
