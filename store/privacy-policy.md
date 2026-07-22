@@ -40,7 +40,8 @@ Their respective privacy policies apply:
 | Permission | Reason |
 |-----------|--------|
 | `storage` | Save API keys, filter settings, and cached ratings locally |
-| `activeTab` | Detect which site you're on to show relevant filter controls |
+| `activeTab` | Detect which site you're on to show relevant filter controls in the popup |
+| `tabs` | Read the active tab's URL to determine which site you're browsing, show the active provider count badge, and detect site breakage for diagnostics |
 | `host_permissions` for rating APIs | Fetch ratings from Google Places, Allocine, and TMDB |
 | Content script on supported sites | Read item names from the page and inject rating badges |
 
