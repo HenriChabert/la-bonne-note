@@ -46,7 +46,7 @@ Their respective privacy policies apply:
 
 ## Data Retention
 
-- Cached ratings are stored locally for 7 days, then automatically refreshed.
+- Cached ratings are stored locally for 30 days, then automatically refreshed.
 - API keys and filter settings persist until you remove them or uninstall the extension.
 - Uninstalling the extension deletes all locally stored data.
 

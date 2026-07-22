@@ -8,7 +8,7 @@ FEATURES:
 - Click any rating badge to open the source page
 - Filter by minimum rating or review count per provider (hide or dim low-rated items)
 - Change filters live — no page reload needed
-- Results cached for 7 days to save API quota
+- Results cached for 30 days to save API quota
 
 SUPPORTED PLATFORMS:
 - Food delivery: Deliveroo, Uber Eats, TheFork (LaFourchette)

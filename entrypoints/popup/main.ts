@@ -8,6 +8,13 @@ const modeHideBtn = document.getElementById("modeHide") as HTMLButtonElement;
 const saveBtn = document.getElementById("save") as HTMLButtonElement;
 const statusEl = document.getElementById("status")!;
 const openSettingsLink = document.getElementById("openSettings")!;
+const enableToggle = document.getElementById("enableToggle") as HTMLInputElement;
+
+// ── Enable/disable toggle (saves immediately) ──
+
+enableToggle.addEventListener("change", () => {
+  chrome.storage.sync.set({ lbnEnabled: enableToggle.checked });
+});
 
 let filterMode: "dim" | "hide" = "dim";
 
@@ -135,13 +142,14 @@ async function init(): Promise<void> {
   }
 
   // Load saved settings
-  const storageKeys = ["filterMode"];
+  const storageKeys = ["filterMode", "lbnEnabled"];
   for (const provider of relevantProviders) {
     storageKeys.push(filterStorageKey(provider.id, "minRating"));
     storageKeys.push(filterStorageKey(provider.id, "minReviews"));
   }
 
   const s = await chrome.storage.sync.get(storageKeys);
+  enableToggle.checked = s.lbnEnabled !== false; // default to enabled
   if (s.filterMode) setMode(s.filterMode);
 
   for (const provider of relevantProviders) {

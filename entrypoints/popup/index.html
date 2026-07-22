@@ -129,10 +129,66 @@
     .settings-link:hover {
       text-decoration: underline;
     }
+    .enable-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .enable-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+    }
+    .switch {
+      position: relative;
+      width: 40px;
+      height: 22px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .switch .slider {
+      position: absolute;
+      inset: 0;
+      background: #ccc;
+      border-radius: 22px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .switch .slider::before {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 3px;
+      bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .switch input:checked + .slider {
+      background: #00CCBC;
+    }
+    .switch input:checked + .slider::before {
+      transform: translateX(18px);
+    }
   </style>
 </head>
 <body>
   <h1>La Bonne Note</h1>
+
+  <div class="enable-row">
+    <span class="enable-label">Enabled</span>
+    <label class="switch">
+      <input type="checkbox" id="enableToggle" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
 
   <div class="field">
     <label>Below threshold</label>

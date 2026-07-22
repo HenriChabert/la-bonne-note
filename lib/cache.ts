@@ -1,4 +1,4 @@
-export const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+export const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 export function cacheKey(providerId: string, name: string, city: string): string {
   return `lbn:${providerId}:${name}:${city}`.toLowerCase();

@@ -51,6 +51,29 @@ async function init(): Promise<void> {
 
   const { cardSelector, getCity, getName, getAddress, getInjectionAnchor, insertBadge, resourceType } = site;
 
+  // ── Enabled state ────────────────────────────────────────────
+  let enabled = true;
+  try {
+    const s = await chrome.storage.sync.get("lbnEnabled");
+    enabled = s.lbnEnabled !== false;
+  } catch { /* default to enabled */ }
+
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === "sync" && changes.lbnEnabled != null) {
+      enabled = changes.lbnEnabled.newValue !== false;
+      if (enabled) {
+        // Re-scan to inject badges
+        scanForNewCards();
+      } else {
+        // Remove all badges and reset filters
+        document.querySelectorAll(".lbn-badge, .lbn-overlay-container").forEach((el) => el.remove());
+        document.querySelectorAll(".lbn-dimmed").forEach((el) => el.classList.remove("lbn-dimmed"));
+        document.querySelectorAll(".lbn-hidden").forEach((el) => el.classList.remove("lbn-hidden"));
+        document.querySelectorAll("[data-lbn-done]").forEach((el) => el.removeAttribute("data-lbn-done"));
+      }
+    }
+  });
+
   await loadFilterSettings().catch(() => {});
   watchFilterChanges(applyFiltersToAll);
 
@@ -131,6 +154,7 @@ async function init(): Promise<void> {
   }
 
   function fetchRatings(card: Element, city: string): void {
+    if (!enabled) return;
     let name: string | null = null;
     let anchor: Element | null = null;
 
@@ -220,6 +244,8 @@ async function init(): Promise<void> {
   let scanScheduled = false;
 
   function scanForNewCards(): void {
+    if (!enabled) return;
+
     // ── Process new cards ──
     const newCards = document.querySelectorAll(
       `${cardSelector}:not([data-lbn-done])`,
@@ -280,7 +306,7 @@ async function init(): Promise<void> {
     });
   }
 
-  scanForNewCards();
+  if (enabled) scanForNewCards();
 
   const mutationObserver = new MutationObserver(scheduleScan);
   mutationObserver.observe(document.body, { childList: true, subtree: true });

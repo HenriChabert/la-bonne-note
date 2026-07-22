@@ -27,17 +27,22 @@ To avoid unexpected charges, restrict your key:
 
 ### Pricing
 
-Google Places API uses [pay-as-you-go pricing](https://developers.google.com/maps/billing-and-pricing/pricing#places-pricing). The extension uses the **Text Search** endpoint with these field masks: `displayName` (Pro), `rating` (Enterprise), `userRatingCount` (Enterprise), `googleMapsUri` (Pro). Since billing uses the highest tier requested, each lookup is billed at the **Text Search Enterprise** rate:
+The extension uses a cost-optimized 2-step approach:
 
-| Monthly volume | Cost per 1,000 requests |
+1. **Text Search (IDs Only)** — finds the place by name → **free** (unlimited)
+2. **Place Details (Enterprise)** — fetches rating, review count, display name, Google Maps link → **$25 per 1,000 requests**
+
+| Monthly volume | Cost per 1,000 lookups |
 |---|---|
 | First 1,000 | Free |
-| 1,001 – 100,000 | $35.00 |
-| 100,001 – 500,000 | $28.00 |
+| 1,001 – 100,000 | $25.00 |
+| 100,001 – 500,000 | $20.00 |
 
-Google provides a [$200/month free credit](https://mapsplatform.google.com/pricing/), so combined with the 1,000 free Enterprise calls, you get roughly **6,700 lookups/month at no cost**. Results are cached for 7 days to minimize API calls.
+The `rating` and `userRatingCount` fields are Enterprise tier. The 2-step approach saves 29% vs a single Text Search Enterprise call ($25/1K vs $35/1K).
 
-See [Text Search field mask tiers](https://developers.google.com/maps/documentation/places/web-service/text-search#fieldmask) for details.
+Google provides a [$200/month free credit](https://mapsplatform.google.com/pricing/), so combined with the 1,000 free Place Details calls, you get roughly **9,000 lookups/month at no cost**. Results are cached for 30 days to further minimize API usage.
+
+See [Place Details field mask tiers](https://developers.google.com/maps/documentation/places/web-service/place-details#fieldmask) for details.
 
 ### Entering the key
 
@@ -92,4 +97,4 @@ Allocine ratings are fetched automatically using Allocine's public autocomplete 
 
 - This uses an undocumented internal endpoint — it may break if Allocine changes their website
 - Each lookup makes 2 HTTP requests (search + page), so it's slower than API-based providers
-- Results are cached for 7 days to minimize requests
+- Results are cached for 30 days to minimize requests

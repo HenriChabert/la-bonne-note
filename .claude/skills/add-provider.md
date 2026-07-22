@@ -129,7 +129,7 @@ Once registered, the provider is automatically:
 - Dispatched by the background service worker for matching `resourceType` lookups
 - Shown in the popup filter controls with appropriate rating scale slider
 - Shown in the options page with API key input (if `apiKeySettingName` is set)
-- Cached with 7-day TTL
+- Cached with 30-day TTL
 - Displayed as a badge with the provider icon
 
 ### Tips

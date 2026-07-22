@@ -7,7 +7,7 @@ Chrome extension that overlays external ratings on food delivery, streaming, and
 - **Multi-provider ratings** — Google Maps for restaurants and hotels, Allocine and TMDB for movies/TV shows
 - **Per-provider filtering** — set minimum rating and review count per provider, hide or dim low-rated items
 - **Live updates** — change filters without reloading the page
-- **Smart caching** — results cached for 7 days to minimize API usage
+- **Smart caching** — results cached for 30 days to minimize API usage
 - **Multiple badges** — see ratings from all relevant providers side by side
 - **Supported platforms:**
   - **Food delivery:** [Deliveroo](https://deliveroo.fr), [Uber Eats](https://ubereats.com), [TheFork](https://thefork.fr)
@@ -59,7 +59,7 @@ Or via the Makefile: `make dev`, `make build`, `make package`, `make clean`.
 ```
 entrypoints/
 ├── background.ts          # Service worker: receives LOOKUP messages, dispatches
-│                          # to providers in parallel, manages 7-day cache
+│                          # to providers in parallel, manages 30-day cache
 ├── content.ts             # Content script: detects site, observes DOM for new
 │                          # cards, lazy-loads ratings via IntersectionObserver
 ├── popup/                 # Filter controls (per-provider min rating/reviews)
@@ -71,7 +71,7 @@ lib/
 ├── registry.ts            # Central registration of all sites + providers
 ├── badge.ts               # Badge DOM builder (supports SVG and image icons)
 ├── filter.ts              # Per-provider filter logic (dim or hide cards)
-├── cache.ts               # chrome.storage.local cache with 7-day TTL
+├── cache.ts               # chrome.storage.local cache with 30-day TTL
 ├── logger.ts              # Configurable console logging with [La Bonne Note] prefix
 ├── sites/                 # One file per supported platform
 │   ├── deliveroo.ts       # resourceType: restaurant
