@@ -129,6 +129,12 @@
     .settings-link:hover {
       text-decoration: underline;
     }
+    .placeholder {
+      text-align: center;
+      color: #999;
+      font-size: 12px;
+      padding: 12px 0;
+    }
     .enable-row {
       display: flex;
       align-items: center;
@@ -190,20 +196,27 @@
     </label>
   </div>
 
-  <div class="field">
-    <label>Below threshold</label>
-    <div class="toggle-row">
-      <button id="modeDim" class="active">Dim</button>
-      <button id="modeHide">Hide</button>
-    </div>
+  <div id="placeholder" class="placeholder" style="display: none;">
+    Navigate to a supported site to configure filters.
   </div>
 
-  <div id="providerFilters"></div>
+  <div id="filterControls">
+    <div class="field">
+      <label>Below threshold</label>
+      <div class="toggle-row">
+        <button id="modeDim" class="active">Dim</button>
+        <button id="modeHide">Hide</button>
+      </div>
+    </div>
 
-  <button class="save-btn" id="save">Save</button>
-  <div id="status"></div>
+    <div id="providerFilters"></div>
+
+    <button class="save-btn" id="save">Save</button>
+    <div id="status"></div>
+  </div>
 
   <a id="openSettings" class="settings-link">API Key Settings</a>
+  <a href="https://github.com/HenriChabert/la-bonne-note" target="_blank" class="settings-link">Documentation</a>
 
   <script type="module" src="./main.ts"></script>
 </body>

@@ -3,6 +3,8 @@ import { filterStorageKey } from "@/lib/filter";
 
 const allProviders = getProvidersMeta();
 const filtersContainer = document.getElementById("providerFilters")!;
+const filterControls = document.getElementById("filterControls")!;
+const placeholderEl = document.getElementById("placeholder")!;
 const modeDimBtn = document.getElementById("modeDim") as HTMLButtonElement;
 const modeHideBtn = document.getElementById("modeHide") as HTMLButtonElement;
 const saveBtn = document.getElementById("save") as HTMLButtonElement;
@@ -49,13 +51,22 @@ async function init(): Promise<void> {
   const hostname = tab?.url ? new URL(tab.url).hostname : "";
   const activeSite = getSiteForHostname(hostname);
 
+  // Load enabled state regardless of site
+  const enabledState = await chrome.storage.sync.get("lbnEnabled");
+  enableToggle.checked = enabledState.lbnEnabled !== false;
+
+  if (!activeSite) {
+    filterControls.style.display = "none";
+    placeholderEl.style.display = "block";
+    return;
+  }
+
   // Filter providers to those relevant to the current site
-  const relevantProviders = activeSite
-    ? allProviders.filter((p) => p.supportedTypes.includes(activeSite.resourceType))
-    : allProviders; // show all if not on a supported site
+  const relevantProviders = allProviders.filter((p) => p.supportedTypes.includes(activeSite.resourceType));
 
   if (relevantProviders.length === 0) {
-    filtersContainer.textContent = "No providers for this site";
+    filterControls.style.display = "none";
+    placeholderEl.style.display = "block";
     return;
   }
 
@@ -142,14 +153,13 @@ async function init(): Promise<void> {
   }
 
   // Load saved settings
-  const storageKeys = ["filterMode", "lbnEnabled"];
+  const storageKeys = ["filterMode"];
   for (const provider of relevantProviders) {
     storageKeys.push(filterStorageKey(provider.id, "minRating"));
     storageKeys.push(filterStorageKey(provider.id, "minReviews"));
   }
 
   const s = await chrome.storage.sync.get(storageKeys);
-  enableToggle.checked = s.lbnEnabled !== false; // default to enabled
   if (s.filterMode) setMode(s.filterMode);
 
   for (const provider of relevantProviders) {
