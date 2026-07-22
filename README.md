@@ -48,7 +48,7 @@ Or via the Makefile: `make dev`, `make build`, `make package`, `make clean`.
 
 ## Setup
 
-1. **Configure API keys** (via extension icon > "API Key Settings"):
+1. **Configure API keys** (via extension icon > "Settings"):
    - **Google Places API key** — for restaurant and hotel ratings ([get one here](https://console.cloud.google.com/apis/credentials))
    - **TMDB API key** — for movie/TV ratings ([get one here](https://www.themoviedb.org/settings/api))
    - **Allocine** — works without an API key

@@ -17,7 +17,7 @@ SUPPORTED PLATFORMS:
 - Hotels: Booking.com
 
 SETUP:
-1. Click the extension icon and go to "API Key Settings"
+1. Click the extension icon and go to "Settings"
 2. Enter your Google Places API key (for restaurant and hotel ratings): https://console.cloud.google.com/apis/credentials
 3. Enter your TMDB API Read Access Token (for movie ratings): https://www.themoviedb.org/settings/api
 4. Allocine works without an API key

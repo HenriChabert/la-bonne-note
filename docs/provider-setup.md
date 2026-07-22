@@ -47,7 +47,7 @@ See [Place Details field mask tiers](https://developers.google.com/maps/document
 ### Entering the key
 
 1. Click the La Bonne Note extension icon in Chrome
-2. Click **API Key Settings** (gear icon)
+2. Click **Settings** (gear icon)
 3. Paste your key in the **Google Maps API Key** field
 4. Click **Save**
 
@@ -75,7 +75,7 @@ TMDB's API is **free** for non-commercial use. See [TMDB's terms of use](https:/
 ### Entering the token
 
 1. Click the La Bonne Note extension icon in Chrome
-2. Click **API Key Settings**
+2. Click **Settings**
 3. Paste your token in the **TMDB API Key** field
 4. Click **Save**
 
