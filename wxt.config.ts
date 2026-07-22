@@ -2,12 +2,12 @@ import { defineConfig } from "wxt";
 
 export default defineConfig({
   webExt: {
-    openBrowser: false,
+    disabled: true,
   },
   manifest: {
     name: "La Bonne Note",
     version: "1.1.0",
-    description: "Show ratings from Google Maps, Allocine, and TMDB on food delivery, streaming, and hotel booking platforms",
+    description: "Overlay external ratings on food delivery, streaming, and hotel booking platforms",
     permissions: ["storage", "activeTab", "tabs"],
     host_permissions: [
       "https://places.googleapis.com/*",
