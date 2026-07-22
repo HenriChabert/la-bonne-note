@@ -1,8 +1,11 @@
 import { defineBackground } from "wxt/utils/define-background";
-import { providers, getProvidersForType } from "@/lib/registry";
+import { providers, getProvidersForType, getProvidersMeta, getSiteForHostname } from "@/lib/registry";
 import { CACHE_TTL_MS, cacheKey } from "@/lib/cache";
 import { log, loadLogLevel, watchLogLevel } from "@/lib/logger";
-import type { LookupRequest, RatingResult } from "@/lib/types";
+import { providerStateStorageKeys, resolveProviderState, resolveAllProviderStates } from "@/lib/provider-state";
+import type { LookupRequest, RatingResult, ResourceType } from "@/lib/types";
+
+const providersMeta = getProvidersMeta();
 
 export default defineBackground(async () => {
   await loadLogLevel().catch(() => {});
@@ -17,8 +20,101 @@ export default defineBackground(async () => {
         .catch(() => sendResponse([]));
       return true;
     }
+    if (msg.type === "SITE_STATUS") {
+      chrome.storage.session.set({
+        [`siteStatus:${msg.siteId}`]: {
+          cardsFound: msg.cardsFound,
+          url: msg.url,
+          ts: Date.now(),
+        },
+      }).catch(() => {});
+    }
+  });
+
+  // ── Badge count on tab changes ──
+
+  chrome.tabs.onActivated.addListener(async ({ tabId }) => {
+    try {
+      const tab = await chrome.tabs.get(tabId);
+      if (tab.url) {
+        const site = getSiteForHostname(new URL(tab.url).hostname);
+        if (site) {
+          await updateBadgeCount(tabId, site.resourceType);
+        } else {
+          chrome.action.setBadgeText({ text: "", tabId });
+        }
+      }
+    } catch { /* tab may be invalid */ }
+  });
+
+  chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+    if (changeInfo.status === "complete" && tab.url) {
+      const site = getSiteForHostname(new URL(tab.url).hostname);
+      if (site) {
+        await updateBadgeCount(tabId, site.resourceType);
+      } else {
+        chrome.action.setBadgeText({ text: "", tabId });
+      }
+    }
+  });
+
+  // ── Refresh badge when provider states or API keys change ──
+
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== "sync") return;
+
+    const relevant = Object.keys(changes).some(
+      (k) =>
+        k.startsWith("provider:") ||
+        k === "lbnEnabled" ||
+        providersMeta.some((p) => p.apiKeySettingName === k),
+    );
+
+    if (relevant) {
+      chrome.tabs.query({ active: true, currentWindow: true }).then(([tab]) => {
+        if (tab?.id && tab.url) {
+          try {
+            const site = getSiteForHostname(new URL(tab.url).hostname);
+            if (site) {
+              updateBadgeCount(tab.id, site.resourceType);
+            } else {
+              chrome.action.setBadgeText({ text: "", tabId: tab.id });
+            }
+          } catch { /* invalid URL */ }
+        }
+      }).catch(() => {});
+    }
   });
 });
+
+// ── Badge count ──
+
+async function updateBadgeCount(
+  tabId: number,
+  resourceType: ResourceType,
+): Promise<void> {
+  const storageData = await chrome.storage.sync.get(
+    [...providerStateStorageKeys(providersMeta), "lbnEnabled"],
+  );
+
+  if (storageData.lbnEnabled === false) {
+    chrome.action.setBadgeText({ text: "", tabId });
+    return;
+  }
+
+  const matching = providersMeta.filter((p) => p.supportedTypes.includes(resourceType));
+  const states = resolveAllProviderStates(matching, storageData);
+
+  let activeCount = 0;
+  for (const state of states.values()) {
+    if (state.active) activeCount++;
+  }
+
+  chrome.action.setBadgeText({ text: activeCount > 0 ? String(activeCount) : "", tabId });
+  chrome.action.setBadgeBackgroundColor({ color: "#00CCBC", tabId });
+}
+
+// ── Lookup ──
 
 function errorResult(providerId: string, providerName: string, providerIcon: string, error: string): RatingResult {
   return { providerId, rating: null, userRatingCount: null, url: null, displayName: null, providerName, providerIcon, error };
@@ -31,13 +127,23 @@ async function handleLookupAll(request: LookupRequest): Promise<RatingResult[]> 
     return [];
   }
 
+  // Load provider states and filter to active only
+  const stateKeys = providerStateStorageKeys(matching);
+  const storageData = await chrome.storage.sync.get(stateKeys);
+  const activeProviders = matching.filter((p) => resolveProviderState(p, storageData).active);
+
   log.debug(`Lookup "${request.name}"`, {
-    providers: matching.map((p) => p.id),
+    allProviders: matching.map((p) => p.id),
+    activeProviders: activeProviders.map((p) => p.id),
     city: request.city,
   });
 
+  if (activeProviders.length === 0) {
+    return [];
+  }
+
   const results = await Promise.all(
-    matching.map((provider) => lookupSingle(provider, request)),
+    activeProviders.map((provider) => lookupSingle(provider, request)),
   );
 
   return results;

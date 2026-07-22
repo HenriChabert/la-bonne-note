@@ -101,10 +101,15 @@ chrome.storage.sync.get([...keySettingNames, "logLevel"], (s) => {
 // Save
 saveBtn.addEventListener("click", () => {
   const settings: Record<string, string> = {};
+  const toRemove: string[] = [];
 
   for (const [settingName, input] of apiKeyInputs) {
     const key = input.value.trim();
-    if (key) settings[settingName] = key;
+    if (key) {
+      settings[settingName] = key;
+    } else {
+      toRemove.push(settingName);
+    }
   }
 
   settings.logLevel = logLevelSelect.value;
@@ -118,6 +123,9 @@ saveBtn.addEventListener("click", () => {
   }
 
   chrome.storage.sync.set(settings, () => {
+    if (toRemove.length > 0) {
+      chrome.storage.sync.remove(toRemove);
+    }
     statusEl.textContent = "Saved!";
     statusEl.className = "saved";
   });

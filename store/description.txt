@@ -7,6 +7,7 @@ FEATURES:
 - Google Maps for restaurants and hotels, Allocine and TMDB for movies and TV shows
 - Click any rating badge to open the source page
 - Filter by minimum rating or review count per provider (hide or dim low-rated items)
+- Enable or disable badges from the popup without disabling the extension
 - Change filters live — no page reload needed
 - Results cached for 30 days to save API quota
 

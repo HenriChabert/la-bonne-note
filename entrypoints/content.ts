@@ -1,6 +1,7 @@
 import { defineContentScript } from "wxt/utils/define-content-script";
 import "@/assets/content.css";
-import { getActiveSite } from "@/lib/registry";
+import { getActiveSite, getProvidersMeta } from "@/lib/registry";
+import { providerStateStorageKeys } from "@/lib/provider-state";
 import { createBadge } from "@/lib/badge";
 import {
   loadFilterSettings,
@@ -58,19 +59,45 @@ async function init(): Promise<void> {
     enabled = s.lbnEnabled !== false;
   } catch { /* default to enabled */ }
 
+  const allProvidersMeta = getProvidersMeta();
+  const relevantProvidersMeta = allProvidersMeta.filter(
+    (p) => p.supportedTypes.includes(resourceType),
+  );
+
+  function cleanAllBadgesAndState(): void {
+    document.querySelectorAll(".lbn-badge, .lbn-overlay-container").forEach((el) => el.remove());
+    document.querySelectorAll(".lbn-dimmed").forEach((el) => el.classList.remove("lbn-dimmed"));
+    document.querySelectorAll(".lbn-hidden").forEach((el) => el.classList.remove("lbn-hidden"));
+    document.querySelectorAll("[data-lbn-done]").forEach((el) => el.removeAttribute("data-lbn-done"));
+  }
+
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === "sync" && changes.lbnEnabled != null) {
+    if (area !== "sync") return;
+
+    // Global enable/disable
+    if (changes.lbnEnabled != null) {
       enabled = changes.lbnEnabled.newValue !== false;
       if (enabled) {
-        // Re-scan to inject badges
+        resultsCache.clear();
+        cleanAllBadgesAndState();
         scanForNewCards();
       } else {
-        // Remove all badges and reset filters
-        document.querySelectorAll(".lbn-badge, .lbn-overlay-container").forEach((el) => el.remove());
-        document.querySelectorAll(".lbn-dimmed").forEach((el) => el.classList.remove("lbn-dimmed"));
-        document.querySelectorAll(".lbn-hidden").forEach((el) => el.classList.remove("lbn-hidden"));
-        document.querySelectorAll("[data-lbn-done]").forEach((el) => el.removeAttribute("data-lbn-done"));
+        cleanAllBadgesAndState();
       }
+      return;
+    }
+
+    // Provider state changes (enabled toggles or API key changes)
+    const providerStateChanged = Object.keys(changes).some(
+      (k) =>
+        k.startsWith("provider:") ||
+        relevantProvidersMeta.some((p) => p.apiKeySettingName === k),
+    );
+
+    if (providerStateChanged && enabled) {
+      resultsCache.clear();
+      cleanAllBadgesAndState();
+      scanForNewCards();
     }
   });
 
@@ -310,4 +337,19 @@ async function init(): Promise<void> {
 
   const mutationObserver = new MutationObserver(scheduleScan);
   mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+  // ── Site breakage detection ──────────────────────────────────
+  // After 10 seconds, report how many cards were found so the popup
+  // can warn the user if selectors appear broken.
+  setTimeout(() => {
+    try {
+      const found = document.querySelectorAll(`${cardSelector}[data-lbn-done]`).length;
+      chrome.runtime.sendMessage({
+        type: "SITE_STATUS",
+        siteId: site.id,
+        cardsFound: found,
+        url: location.href,
+      }).catch(() => {});
+    } catch { /* extension context may be invalidated */ }
+  }, 10_000);
 }

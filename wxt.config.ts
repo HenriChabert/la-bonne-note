@@ -8,7 +8,7 @@ export default defineConfig({
     name: "La Bonne Note",
     version: "1.1.0",
     description: "Show ratings from Google Maps, Allocine, and TMDB on food delivery, streaming, and hotel booking platforms",
-    permissions: ["storage", "activeTab"],
+    permissions: ["storage", "activeTab", "tabs"],
     host_permissions: [
       "https://places.googleapis.com/*",
       "https://www.allocine.fr/*",
