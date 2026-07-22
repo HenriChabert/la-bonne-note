@@ -1,27 +1,19 @@
-See external ratings directly on Deliveroo, Uber Eats, TheFork, Netflix, Disney+, Canal+, Amazon Prime Video, and Booking.com.
+See external ratings directly on food delivery, streaming, and hotel booking platforms.
 
-La Bonne Note overlays ratings from Google Maps, Allocine, and TMDB on your favorite food delivery, streaming, and hotel booking platforms. No more switching between tabs to check if a restaurant, movie, or hotel is actually good — the info is right there.
+La Bonne Note overlays ratings from popular review sources so you can check if a restaurant, movie, or hotel is worth it — without switching tabs. Ratings appear as small badges on every card, right where you need them.
 
 FEATURES:
 - Ratings from multiple providers displayed on every card
-- Google Maps for restaurants and hotels, Allocine and TMDB for movies and TV shows
-- Click any rating badge to open the source page
-- Filter by minimum rating or review count per provider (hide or dim low-rated items)
-- Enable or disable badges from the popup without disabling the extension
+- Click any badge to open the original review page
+- Filter by minimum rating or review count (hide or dim low-rated items)
+- Enable or disable individual providers from the popup
 - Change filters live — no page reload needed
-- Results cached for 30 days to save API quota
-
-SUPPORTED PLATFORMS:
-- Food delivery: Deliveroo, Uber Eats, TheFork (LaFourchette)
-- Streaming: Netflix, Disney+, Canal+, Amazon Prime Video
-- Hotels: Booking.com
+- Results cached to save API quota
 
 SETUP:
 1. Click the extension icon and go to "Settings"
-2. Enter your Google Places API key (for restaurant and hotel ratings): https://console.cloud.google.com/apis/credentials
-3. Enter your TMDB API Read Access Token (for movie ratings): https://www.themoviedb.org/settings/api
-4. Allocine works without an API key
-5. Browse any supported platform — ratings appear automatically
+2. Enter your API keys for the providers you want to use
+3. Browse a supported platform — ratings appear automatically
 
 Full setup guide: https://github.com/HenriChabert/la-bonne-note/blob/main/docs/provider-setup.md
 
