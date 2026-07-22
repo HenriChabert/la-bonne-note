@@ -14,6 +14,11 @@
     }
     h1 {
       font-size: 16px;
+      margin: 0 0 2px 0;
+    }
+    .subtitle {
+      font-size: 11px;
+      color: #999;
       margin: 0 0 12px 0;
     }
     label {
@@ -95,9 +100,13 @@
     .toggle-row button:hover:not(.active) {
       background: #ddd;
     }
-    button.save-btn {
+    .btn-row {
+      display: flex;
+      gap: 6px;
       margin-top: 8px;
-      width: 100%;
+    }
+    button.save-btn {
+      flex: 1;
       padding: 8px;
       background: #00CCBC;
       color: #fff;
@@ -109,6 +118,18 @@
     button.save-btn:hover {
       background: #00b8a9;
     }
+    button.reset-btn {
+      padding: 8px 12px;
+      background: #e8eaed;
+      color: #333;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    button.reset-btn:hover {
+      background: #ddd;
+    }
     #status {
       margin-top: 6px;
       font-size: 12px;
@@ -117,17 +138,26 @@
     #status.saved {
       color: #2e7d32;
     }
-    .settings-link {
-      display: block;
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
       margin-top: 10px;
-      text-align: center;
+    }
+    .footer-links a {
       font-size: 12px;
       color: #00CCBC;
       cursor: pointer;
       text-decoration: none;
     }
-    .settings-link:hover {
+    .footer-links a:hover {
       text-decoration: underline;
+    }
+    .footer-links .separator {
+      color: #ccc;
+      font-size: 12px;
+      user-select: none;
     }
     .placeholder {
       text-align: center;
@@ -187,6 +217,7 @@
 </head>
 <body>
   <h1>La Bonne Note</h1>
+  <div class="subtitle">by Web Autopilot</div>
 
   <div class="enable-row">
     <span class="enable-label">Enabled</span>
@@ -196,9 +227,7 @@
     </label>
   </div>
 
-  <div id="placeholder" class="placeholder" style="display: none;">
-    Navigate to a supported site to configure filters.
-  </div>
+  <div id="placeholder" class="placeholder" style="display: none;"></div>
 
   <div id="filterControls">
     <div class="field">
@@ -211,12 +240,18 @@
 
     <div id="providerFilters"></div>
 
-    <button class="save-btn" id="save">Save</button>
+    <div class="btn-row">
+      <button class="save-btn" id="save">Save</button>
+      <button class="reset-btn" id="reset">Reset</button>
+    </div>
     <div id="status"></div>
   </div>
 
-  <a id="openSettings" class="settings-link">API Key Settings</a>
-  <a href="https://github.com/HenriChabert/la-bonne-note" target="_blank" class="settings-link">Documentation</a>
+  <div class="footer-links">
+    <a id="openSettings" href="#">API Key Settings</a>
+    <span class="separator">|</span>
+    <a href="https://github.com/HenriChabert/la-bonne-note" target="_blank">Documentation</a>
+  </div>
 
   <script type="module" src="./main.ts"></script>
 </body>

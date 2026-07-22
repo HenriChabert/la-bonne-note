@@ -8,14 +8,31 @@ const placeholderEl = document.getElementById("placeholder")!;
 const modeDimBtn = document.getElementById("modeDim") as HTMLButtonElement;
 const modeHideBtn = document.getElementById("modeHide") as HTMLButtonElement;
 const saveBtn = document.getElementById("save") as HTMLButtonElement;
+const resetBtn = document.getElementById("reset") as HTMLButtonElement;
 const statusEl = document.getElementById("status")!;
 const openSettingsLink = document.getElementById("openSettings")!;
 const enableToggle = document.getElementById("enableToggle") as HTMLInputElement;
 
 // ── Enable/disable toggle (saves immediately) ──
 
+function updatePlaceholder(isEnabled: boolean, onSupportedSite: boolean): void {
+  if (!isEnabled) {
+    filterControls.style.display = "none";
+    placeholderEl.textContent = "Extension is disabled.";
+    placeholderEl.style.display = "block";
+  } else if (!onSupportedSite) {
+    filterControls.style.display = "none";
+    placeholderEl.textContent = "Navigate to a supported site to configure filters.";
+    placeholderEl.style.display = "block";
+  } else {
+    filterControls.style.display = "";
+    placeholderEl.style.display = "none";
+  }
+}
+
 enableToggle.addEventListener("change", () => {
   chrome.storage.sync.set({ lbnEnabled: enableToggle.checked });
+  updatePlaceholder(enableToggle.checked, providerInputs.size > 0);
 });
 
 let filterMode: "dim" | "hide" = "dim";
@@ -44,32 +61,25 @@ interface ProviderInputs {
 }
 
 const providerInputs = new Map<string, ProviderInputs>();
+let currentSite: ReturnType<typeof getSiteForHostname> = undefined;
 
 async function init(): Promise<void> {
   // Get active tab URL to determine which site the user is on
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   const hostname = tab?.url ? new URL(tab.url).hostname : "";
-  const activeSite = getSiteForHostname(hostname);
+  currentSite = getSiteForHostname(hostname);
 
   // Load enabled state regardless of site
   const enabledState = await chrome.storage.sync.get("lbnEnabled");
-  enableToggle.checked = enabledState.lbnEnabled !== false;
-
-  if (!activeSite) {
-    filterControls.style.display = "none";
-    placeholderEl.style.display = "block";
-    return;
-  }
+  const isEnabled = enabledState.lbnEnabled !== false;
+  enableToggle.checked = isEnabled;
 
   // Filter providers to those relevant to the current site
-  const relevantProviders = allProviders.filter((p) => p.supportedTypes.includes(activeSite.resourceType));
+  const relevantProviders = currentSite
+    ? allProviders.filter((p) => p.supportedTypes.includes(currentSite!.resourceType))
+    : [];
 
-  if (relevantProviders.length === 0) {
-    filterControls.style.display = "none";
-    placeholderEl.style.display = "block";
-    return;
-  }
-
+  // Always build the UI, then toggle visibility
   for (const provider of relevantProviders) {
     const section = document.createElement("div");
     section.className = "provider-section";
@@ -179,6 +189,9 @@ async function init(): Promise<void> {
       inputs.reviewsInput.value = String(savedReviews);
     }
   }
+
+  // Set initial visibility
+  updatePlaceholder(isEnabled, !!currentSite && relevantProviders.length > 0);
 }
 
 // ── Save (saves all provider filters, not just visible ones) ──
@@ -199,6 +212,21 @@ saveBtn.addEventListener("click", () => {
     statusEl.textContent = "Saved!";
     statusEl.className = "saved";
   });
+});
+
+// ── Reset filters ──
+
+resetBtn.addEventListener("click", () => {
+  setMode("dim");
+
+  for (const inputs of providerInputs.values()) {
+    inputs.ratingSlider.value = "0";
+    inputs.ratingLabel.textContent = "Off";
+    inputs.reviewsInput.value = "0";
+  }
+
+  // Trigger save immediately
+  saveBtn.click();
 });
 
 init();
