@@ -7,11 +7,31 @@ import type { LookupRequest, RatingResult, ResourceType } from "@/lib/types";
 
 const providersMeta = getProvidersMeta();
 
+const ICONS_ENABLED = {
+  16: "icons/icon16.png",
+  48: "icons/icon48.png",
+  128: "icons/icon128.png",
+};
+
+const ICONS_DISABLED = {
+  16: "icons/icon-disabled16.png",
+  48: "icons/icon-disabled48.png",
+  128: "icons/icon-disabled128.png",
+};
+
+function updateIcon(isEnabled: boolean): void {
+  chrome.action.setIcon({ path: isEnabled ? ICONS_ENABLED : ICONS_DISABLED });
+}
+
 export default defineBackground(async () => {
   await loadLogLevel().catch(() => {});
   watchLogLevel();
 
   log.info("Background started", { providers: providers.map((p) => p.id) });
+
+  // Set initial icon state
+  const { lbnEnabled } = await chrome.storage.sync.get("lbnEnabled");
+  updateIcon(lbnEnabled !== false);
 
   chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     if (msg.type === "LOOKUP") {
@@ -62,6 +82,10 @@ export default defineBackground(async () => {
 
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== "sync") return;
+
+    if (changes.lbnEnabled != null) {
+      updateIcon(changes.lbnEnabled.newValue !== false);
+    }
 
     const relevant = Object.keys(changes).some(
       (k) =>
