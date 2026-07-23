@@ -6,7 +6,7 @@ export default defineConfig({
   },
   manifest: {
     name: "La Bonne Note",
-    version: "1.1.0",
+    version: "1.2.0",
     description: "Overlay external ratings on food delivery, streaming, and hotel booking platforms",
     permissions: ["storage", "activeTab", "tabs"],
     host_permissions: [
