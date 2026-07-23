@@ -2,131 +2,319 @@ import { getProvidersMeta } from "@/lib/registry";
 import { clearProviderCache } from "@/lib/cache";
 
 const providersMeta = getProvidersMeta();
-const apiKeysContainer = document.getElementById("apiKeys")!;
+const providersContainer = document.getElementById("providers")!;
 const logLevelSelect = document.getElementById("logLevel") as HTMLSelectElement;
-const saveBtn = document.getElementById("save") as HTMLButtonElement;
-const statusEl = document.getElementById("status")!;
+const saveGeneralBtn = document.getElementById("saveGeneral") as HTMLButtonElement;
+const generalStatusEl = document.getElementById("generalStatus")!;
 
-const apiKeyInputs: Map<string, HTMLInputElement> = new Map();
+// ── Provider setup instructions ──
 
-const helpLinks: Record<string, string> = {
-  placesApiKey: "https://console.cloud.google.com/apis/credentials",
-};
-
-for (const provider of providersMeta) {
-  const field = document.createElement("div");
-  field.className = "field";
-
-  if (provider.apiKeySettingName) {
-    const label = document.createElement("label");
-    label.htmlFor = `apiKey-${provider.id}`;
-    label.textContent = `${provider.name} API Key`;
-
-    const input = document.createElement("input");
-    input.type = "password";
-    input.id = `apiKey-${provider.id}`;
-    input.placeholder = provider.apiKeyPlaceholder ?? "";
-
-    const wrapper = document.createElement("div");
-    wrapper.className = "input-wrapper";
-
-    const toggle = document.createElement("button");
-    toggle.type = "button";
-    toggle.className = "toggle-visibility";
-    toggle.textContent = "\u{1F441}";
-    toggle.title = "Show/hide API key";
-    toggle.addEventListener("click", () => {
-      const visible = input.type === "text";
-      input.type = visible ? "password" : "text";
-      toggle.textContent = visible ? "\u{1F441}" : "\u{1F441}\u{200D}\u{1F5E8}";
-    });
-
-    wrapper.appendChild(input);
-    wrapper.appendChild(toggle);
-
-    field.appendChild(label);
-    field.appendChild(wrapper);
-
-    const helpUrl = helpLinks[provider.apiKeySettingName];
-    if (helpUrl) {
-      const hint = document.createElement("div");
-      hint.className = "hint";
-      hint.innerHTML = `Get your key from <a href="${helpUrl}" target="_blank">Google Cloud Console</a>`;
-      field.appendChild(hint);
-    }
-
-    apiKeyInputs.set(provider.apiKeySettingName, input);
-  } else {
-    const label = document.createElement("label");
-    label.textContent = `${provider.name}`;
-    field.appendChild(label);
-
-    const hint = document.createElement("div");
-    hint.className = "hint";
-    hint.textContent = "No API key required";
-    field.appendChild(hint);
-  }
-
-  // Clear cache button
-  const clearBtn = document.createElement("button");
-  clearBtn.className = "clear-cache";
-  clearBtn.textContent = `Clear ${provider.name} cache`;
-  clearBtn.addEventListener("click", async () => {
-    const count = await clearProviderCache(provider.id);
-    clearBtn.textContent = `Cleared ${count} entries`;
-    setTimeout(() => {
-      clearBtn.textContent = `Clear ${provider.name} cache`;
-    }, 2000);
-  });
-  field.appendChild(clearBtn);
-
-  apiKeysContainer.appendChild(field);
+interface SetupStep {
+  text: string;
+  detail?: string;
+  linkUrl?: string;
+  linkText?: string;
 }
 
-// Load saved keys
-const keySettingNames = providersMeta
-  .map((p) => p.apiKeySettingName)
-  .filter((k): k is string => !!k);
+interface ProviderSetup {
+  description: string;
+  steps: SetupStep[];
+  note?: string;
+  freeNotice?: string;
+}
 
-chrome.storage.sync.get([...keySettingNames, "logLevel"], (s) => {
+const setupInstructions: Record<string, ProviderSetup> = {
+  "google-maps": {
+    description: "Restaurants & hotels on Deliveroo, Uber Eats, TheFork, Booking.com",
+    steps: [
+      {
+        text: "Create a Google Cloud project",
+        detail: 'Click the link below, give your project a name (e.g. "La Bonne Note"), then click "Create". If you already have a project, you can skip this step.',
+        linkUrl: "https://console.cloud.google.com/projectcreate",
+        linkText: "Open Google Cloud Console",
+      },
+      {
+        text: "Enable the Places API",
+        detail: 'Click the link below. You\'ll see the "Places API (New)" page. Click the blue "Enable" button. If it says "Manage" instead, the API is already enabled.',
+        linkUrl: "https://console.cloud.google.com/apis/library/places-backend.googleapis.com",
+        linkText: "Enable Places API",
+      },
+      {
+        text: "Create an API key",
+        detail: 'Click the link below to open the Credentials page. Click "+ Create Credentials" at the top, then select "API key". A dialog will appear with your new key — click the copy icon next to it.',
+        linkUrl: "https://console.cloud.google.com/apis/credentials",
+        linkText: "Go to Credentials",
+      },
+      {
+        text: "Paste your API key below",
+        detail: "Paste the key you just copied into the field below and click Save. You're all set!",
+      },
+    ],
+    note: "Free for ~9,000 lookups/month with Google's $200 monthly credit. Results are cached for 30 days to minimize API usage.",
+  },
+  tmdb: {
+    description: "Movies & TV shows on Netflix, Disney+, Canal+, Prime Video",
+    steps: [
+      {
+        text: "Create a free TMDB account",
+        detail: "Click the link below and fill in the registration form. You'll need to verify your email address.",
+        linkUrl: "https://www.themoviedb.org/signup",
+        linkText: "Sign up at TMDB",
+      },
+      {
+        text: "Request an API key",
+        detail: 'Click the link below, then click "Create" or "click here" under the Request an API Key section. Select "Developer" as the usage type and fill in the form (application name, URL, and description can be anything).',
+        linkUrl: "https://www.themoviedb.org/settings/api",
+        linkText: "Open API Settings",
+      },
+      {
+        text: "Copy the API Read Access Token",
+        detail: 'On the same API settings page, scroll down to find the "API Read Access Token (v4 auth)" section. Copy the long token that starts with "eyJ..." — this is the one you need, not the shorter API Key above it.',
+      },
+      {
+        text: "Paste your token below",
+        detail: "Paste the long token into the field below and click Save.",
+      },
+    ],
+    note: "Completely free for non-commercial use. No credit card required.",
+  },
+  allocine: {
+    description: "Movies & TV shows on Netflix, Disney+, Canal+, Prime Video",
+    freeNotice: "Ready to use — no configuration needed. Allocine ratings appear automatically on streaming platforms.",
+  },
+};
+
+// ── Render provider icon ──
+
+function renderIcon(icon: string, container: HTMLElement): void {
+  if (icon.trimStart().startsWith("<")) {
+    const parsed = new DOMParser().parseFromString(icon, "image/svg+xml");
+    const svg = parsed.documentElement;
+    if (svg instanceof SVGElement) {
+      container.appendChild(document.importNode(svg, true));
+    }
+  } else {
+    const img = document.createElement("img");
+    img.src = icon;
+    container.appendChild(img);
+  }
+}
+
+// ── Build provider cards ──
+
+async function init(): Promise<void> {
+  const keyNames = providersMeta
+    .map((p) => p.apiKeySettingName)
+    .filter((k): k is string => !!k);
+
+  const stored = await chrome.storage.sync.get([...keyNames, "logLevel"]);
+
+  if (stored.logLevel) logLevelSelect.value = stored.logLevel;
+
   for (const provider of providersMeta) {
-    if (!provider.apiKeySettingName) continue;
-    const saved = s[provider.apiKeySettingName];
-    const input = apiKeyInputs.get(provider.apiKeySettingName);
-    if (saved && input) input.value = saved;
-  }
-  if (s.logLevel) logLevelSelect.value = s.logLevel;
-});
+    const setup = setupInstructions[provider.id];
+    if (!setup) continue;
 
-// Save
-saveBtn.addEventListener("click", () => {
-  const settings: Record<string, string> = {};
-  const toRemove: string[] = [];
+    const hasKey = provider.apiKeySettingName
+      ? !!stored[provider.apiKeySettingName]
+      : true;
+    const isFree = !provider.apiKeySettingName;
 
-  for (const [settingName, input] of apiKeyInputs) {
-    const key = input.value.trim();
-    if (key) {
-      settings[settingName] = key;
+    const card = document.createElement("div");
+    card.className = `provider-card${hasKey ? " configured" : ""}`;
+    card.id = provider.id;
+
+    // ── Header ──
+    const header = document.createElement("div");
+    header.className = "card-header";
+    header.setAttribute("aria-expanded", "false");
+
+    const iconDiv = document.createElement("div");
+    iconDiv.className = "card-icon";
+    if (provider.icon) renderIcon(provider.icon, iconDiv);
+
+    const titleDiv = document.createElement("div");
+    titleDiv.className = "card-title";
+    const h2 = document.createElement("h2");
+    h2.textContent = provider.name;
+    const desc = document.createElement("div");
+    desc.className = "card-desc";
+    desc.textContent = setup.description;
+    titleDiv.appendChild(h2);
+    titleDiv.appendChild(desc);
+
+    const status = document.createElement("span");
+    status.className = "card-status";
+    if (isFree) {
+      status.classList.add("free");
+      status.textContent = "Free";
+    } else if (hasKey) {
+      status.classList.add("configured");
+      status.textContent = "Configured";
     } else {
-      toRemove.push(settingName);
+      status.classList.add("not-configured");
+      status.textContent = "Not configured";
     }
+
+    const chevron = document.createElement("span");
+    chevron.className = "card-chevron";
+    chevron.textContent = "\u25B6";
+
+    header.appendChild(iconDiv);
+    header.appendChild(titleDiv);
+    header.appendChild(status);
+    header.appendChild(chevron);
+
+    // ── Body ──
+    const body = document.createElement("div");
+    body.className = "card-body";
+    // All cards start collapsed; status badge shows config state at a glance
+
+    if (setup.freeNotice) {
+      const notice = document.createElement("div");
+      notice.className = "free-notice";
+      const checkmark = document.createElement("span");
+      checkmark.className = "checkmark";
+      checkmark.textContent = "\u2713";
+      const text = document.createElement("span");
+      text.textContent = setup.freeNotice;
+      notice.appendChild(checkmark);
+      notice.appendChild(text);
+      body.appendChild(notice);
+    } else {
+      // Steps
+      const ol = document.createElement("ol");
+      ol.className = "steps";
+      for (const step of setup.steps) {
+        const li = document.createElement("li");
+        const title = document.createElement("strong");
+        title.textContent = step.text;
+        li.appendChild(title);
+        if (step.detail) {
+          const detail = document.createElement("div");
+          detail.className = "step-detail";
+          detail.textContent = step.detail;
+          li.appendChild(detail);
+        }
+        if (step.linkUrl && step.linkText) {
+          const link = document.createElement("a");
+          link.href = step.linkUrl;
+          link.target = "_blank";
+          link.innerHTML = `${step.linkText} &rarr;`;
+          li.appendChild(link);
+        }
+        ol.appendChild(li);
+      }
+      body.appendChild(ol);
+
+      // API key input
+      if (provider.apiKeySettingName) {
+        const inputRow = document.createElement("div");
+        inputRow.className = "key-input-row";
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = provider.apiKeyPlaceholder ?? "Paste your key here";
+        if (stored[provider.apiKeySettingName]) {
+          input.value = stored[provider.apiKeySettingName] as string;
+        }
+
+        const saveBtn = document.createElement("button");
+        saveBtn.textContent = hasKey ? "Saved" : "Save";
+        if (hasKey) saveBtn.classList.add("saved");
+
+        const feedback = document.createElement("div");
+        feedback.className = "key-feedback";
+
+        saveBtn.addEventListener("click", async () => {
+          const key = input.value.trim();
+          if (!key) {
+            feedback.textContent = "Please enter a key";
+            feedback.className = "key-feedback error";
+            return;
+          }
+          await chrome.storage.sync.set({ [provider.apiKeySettingName!]: key });
+          saveBtn.textContent = "Saved";
+          saveBtn.classList.add("saved");
+          input.classList.add("saved");
+          status.textContent = "Configured";
+          status.className = "card-status configured";
+          card.classList.add("configured");
+          feedback.textContent = "Key saved successfully";
+          feedback.className = "key-feedback success";
+          setTimeout(() => input.classList.remove("saved"), 2000);
+        });
+
+        input.addEventListener("input", () => {
+          saveBtn.textContent = "Save";
+          saveBtn.classList.remove("saved");
+          feedback.textContent = "";
+        });
+
+        inputRow.appendChild(input);
+        inputRow.appendChild(saveBtn);
+        body.appendChild(inputRow);
+        body.appendChild(feedback);
+      }
+
+      // Pricing note
+      if (setup.note) {
+        const note = document.createElement("div");
+        note.className = "note";
+        note.innerHTML = `<strong>Pricing:</strong> ${setup.note}`;
+        body.appendChild(note);
+      }
+    }
+
+    // Cache clear
+    const clearBtn = document.createElement("button");
+    clearBtn.className = "clear-cache";
+    clearBtn.textContent = `Clear ${provider.name} cache`;
+    clearBtn.addEventListener("click", async () => {
+      const count = await clearProviderCache(provider.id);
+      clearBtn.textContent = `Cleared ${count} entries`;
+      setTimeout(() => {
+        clearBtn.textContent = `Clear ${provider.name} cache`;
+      }, 2000);
+    });
+    body.appendChild(clearBtn);
+
+    // Toggle
+    header.addEventListener("click", () => {
+      const isOpen = body.classList.contains("open");
+      body.classList.toggle("open");
+      header.setAttribute("aria-expanded", String(!isOpen));
+    });
+
+    card.appendChild(header);
+    card.appendChild(body);
+    providersContainer.appendChild(card);
   }
 
-  settings.logLevel = logLevelSelect.value;
-
-  const hasKeylessProvider = providersMeta.some((p) => !p.apiKeySettingName);
-  if (Object.keys(settings).length <= 1 && !hasKeylessProvider) {
-    // Only logLevel is set, no API keys
-    statusEl.textContent = "Please enter at least one API key";
-    statusEl.className = "error";
-    return;
-  }
-
-  chrome.storage.sync.set(settings, () => {
-    if (toRemove.length > 0) {
-      chrome.storage.sync.remove(toRemove);
+  // ── Anchor scrolling (e.g. options.html#google-maps) ──
+  const hash = location.hash.slice(1);
+  if (hash) {
+    const el = document.getElementById(hash);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      const body = el.querySelector(".card-body");
+      const header = el.querySelector(".card-header");
+      if (body && !body.classList.contains("open")) {
+        body.classList.add("open");
+        header?.setAttribute("aria-expanded", "true");
+      }
     }
-    statusEl.textContent = "Saved!";
-    statusEl.className = "saved";
+  }
+}
+
+// ── General settings ──
+
+saveGeneralBtn.addEventListener("click", () => {
+  chrome.storage.sync.set({ logLevel: logLevelSelect.value }, () => {
+    generalStatusEl.textContent = "Saved!";
+    generalStatusEl.style.color = "#2e7d32";
+    setTimeout(() => { generalStatusEl.textContent = ""; }, 2000);
   });
 });
+
+init();

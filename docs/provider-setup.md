@@ -10,13 +10,12 @@ Google Maps ratings are shown on food delivery platforms (Deliveroo, Uber Eats, 
 
 ### Getting your API key
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project (or select an existing one)
-3. Navigate to **APIs & Services > Library**
-4. Search for **Places API (New)** and enable it
-5. Go to **APIs & Services > Credentials**
-6. Click **Create Credentials > API key**
-7. Copy the key
+1. [Create a Google Cloud project](https://console.cloud.google.com/projectcreate) (or select an existing one)
+2. [Enable the Places API (New)](https://console.cloud.google.com/apis/library/places-backend.googleapis.com) in your project
+3. [Create an API key](https://console.cloud.google.com/apis/credentials) via **Create Credentials > API key**
+4. Copy the key
+
+> **Tip:** The extension's settings page includes a step-by-step setup guide for each provider — click "Settings" in the popup to access it.
 
 ### Recommended restrictions
 
@@ -47,8 +46,8 @@ See [Place Details field mask tiers](https://developers.google.com/maps/document
 ### Entering the key
 
 1. Click the La Bonne Note extension icon in Chrome
-2. Click **Settings** (gear icon)
-3. Paste your key in the **Google Maps API Key** field
+2. Click **Settings**
+3. Expand the **Google Maps** card and paste your key
 4. Click **Save**
 
 ---
@@ -76,7 +75,7 @@ TMDB's API is **free** for non-commercial use. See [TMDB's terms of use](https:/
 
 1. Click the La Bonne Note extension icon in Chrome
 2. Click **Settings**
-3. Paste your token in the **TMDB API Key** field
+3. Expand the **TMDB** card and paste your token
 4. Click **Save**
 
 ---

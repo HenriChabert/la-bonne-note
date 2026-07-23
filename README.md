@@ -52,9 +52,8 @@ Or via the Makefile: `make dev`, `make build`, `make package`, `make clean`.
    - **Google Places API key** — for restaurant and hotel ratings ([get one here](https://console.cloud.google.com/apis/credentials))
    - **TMDB API key** — for movie/TV ratings ([get one here](https://www.themoviedb.org/settings/api))
    - **Allocine** — works without an API key
-   - API key inputs have a visibility toggle to show/hide the key
 
-   See [docs/provider-setup.md](docs/provider-setup.md) for detailed setup instructions and pricing.
+   The settings page includes step-by-step setup instructions for each provider. See [docs/provider-setup.md](docs/provider-setup.md) for detailed pricing and limitations.
 
 2. **Set filters** (via extension icon):
    - Set minimum rating per provider (sliders adapt to each provider's scale)
@@ -78,8 +77,8 @@ entrypoints/
 ├── popup/                 # Enable/disable toggle, per-provider filter controls
 │                          # (min rating/reviews), reset button, dim/hide mode,
 │                          # links to settings and documentation
-└── options/               # Settings page (API keys with show/hide toggle,
-                           # per-provider cache clearing, log level)
+└── options/               # Settings page (per-provider setup guides, API key
+                           # inputs, cache clearing, log level)
 
 lib/
 ├── types.ts               # SiteAdapter, RatingProvider, RatingResult interfaces
@@ -88,6 +87,7 @@ lib/
 │                          # handles loading, error, N/A, and disconnected states)
 ├── filter.ts              # Per-provider filter logic (dim or hide cards)
 ├── cache.ts               # chrome.storage.local cache with 30-day TTL
+├── provider-state.ts      # Per-provider enable/disable state management
 ├── logger.ts              # Configurable console logging with [La Bonne Note] prefix
 ├── sites/                 # One file per supported platform
 │   ├── deliveroo.ts       # resourceType: restaurant

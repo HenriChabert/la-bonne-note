@@ -30,9 +30,9 @@ Chrome extension (WXT + TypeScript) that overlays external ratings on food deliv
 
 ### Skills
 
-- `.claude/skills/add-site.md` — step-by-step guide for adding a new site adapter
-- `.claude/skills/add-provider.md` — step-by-step guide for adding a new rating provider
-- `.claude/skills/maintain.md` — documentation checklist to keep all docs in sync after changes
+- `.claude/skills/add-site/SKILL.md` — step-by-step guide for adding a new site adapter
+- `.claude/skills/add-provider/SKILL.md` — step-by-step guide for adding a new rating provider
+- `.claude/skills/maintain/SKILL.md` — documentation checklist to keep all docs in sync after changes
 
 ### Development
 

@@ -1,3 +1,7 @@
+---
+description: Step-by-step guide for adding a new site adapter to La Bonne Note.
+---
+
 # Skill: Add a new site
 
 Add support for a new website platform to La Bonne Note.
@@ -85,9 +89,9 @@ Usually not needed — sites are accessed as content scripts, not via fetch.
 ### 5. Update documentation
 
 - `README.md`: add the new site to the "Supported platforms" list and architecture tree
-- `store/description.txt`: add the site to the Chrome Web Store description (supported platforms list and first line)
 - `store/privacy-policy.md`: update if a new data type or third-party service is involved
 - `wxt.config.ts`: update manifest `description` if a new category was added
+- Do NOT add site names to `store/description.txt` — Chrome Web Store rejects this as keyword spam
 
 ### Tips
 

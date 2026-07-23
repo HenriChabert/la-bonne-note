@@ -57,6 +57,7 @@ openSettingsLink.addEventListener("click", (e) => {
   chrome.runtime.openOptionsPage();
 });
 
+
 // ── Detect active tab's site and show only relevant providers ──
 
 interface ProviderInputs {

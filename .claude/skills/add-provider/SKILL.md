@@ -1,3 +1,7 @@
+---
+description: Step-by-step guide for adding a new rating provider to La Bonne Note.
+---
+
 # Skill: Add a new rating provider
 
 Add a new rating source to La Bonne Note.
@@ -104,22 +108,43 @@ host_permissions: [
 ],
 ```
 
-### 5. Add help link for API key (if applicable)
+### 5. Add setup instructions in settings page
 
-In `entrypoints/options/main.ts`, add an entry to the `helpLinks` object:
+In `entrypoints/options/main.ts`, add an entry to the `setupInstructions` object:
 
 ```ts
-const helpLinks: Record<string, string> = {
+const setupInstructions: Record<string, ProviderSetup> = {
   // ... existing
-  providerApiKey: "https://example.com/api-keys",
+  "provider-id": {
+    description: "Brief description of what this provider covers",
+    steps: [
+      {
+        text: "Step title",
+        detail: "Detailed instructions for this step",
+        linkUrl: "https://example.com/signup",
+        linkText: "Open Example",
+      },
+      // ... more steps
+      { text: "Paste your key below", detail: "Paste and click Save." },
+    ],
+    note: "Pricing info here",
+  },
 };
+```
+
+For providers without an API key, use `freeNotice` instead of `steps`:
+```ts
+"provider-id": {
+  description: "Brief description",
+  freeNotice: "Ready to use — no configuration needed.",
+},
 ```
 
 ### 6. Update documentation
 
 - `docs/provider-setup.md`: add a section for the new provider with setup instructions (API key steps, pricing, limitations)
 - `README.md`: add the provider to "Features" description, add API key setup under "Setup > Configure API keys", update architecture tree
-- `store/description.txt`: add the provider to the Chrome Web Store description (features and setup sections)
+- Do NOT add provider/site names to `store/description.txt` — Chrome Web Store rejects this as keyword spam
 - `store/privacy-policy.md`: add the new service to the "Third-Party Services" and "Data Usage" tables
 - `wxt.config.ts`: update manifest `description` to mention the new provider
 
