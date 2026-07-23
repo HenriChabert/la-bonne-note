@@ -8,6 +8,7 @@ const doneBtn = document.getElementById("doneBtn")!;
 
 interface SetupStep {
   text: string;
+  detail?: string;
   linkUrl?: string;
   linkText?: string;
 }
@@ -24,22 +25,26 @@ const setupInstructions: Record<string, ProviderSetup> = {
     description: "Restaurants & hotels on Deliveroo, Uber Eats, TheFork, Booking.com",
     steps: [
       {
-        text: "Create a Google Cloud project (or select an existing one)",
+        text: "Create a Google Cloud project",
+        detail: 'Click the link below, give your project a name (e.g. "La Bonne Note"), then click "Create". If you already have a project, you can skip this step.',
         linkUrl: "https://console.cloud.google.com/projectcreate",
         linkText: "Open Google Cloud Console",
       },
       {
-        text: "Enable the Places API in your project",
+        text: "Enable the Places API",
+        detail: 'Click the link below. You\'ll see the "Places API (New)" page. Click the blue "Enable" button. If it says "Manage" instead, the API is already enabled.',
         linkUrl: "https://console.cloud.google.com/apis/library/places-backend.googleapis.com",
         linkText: "Enable Places API",
       },
       {
         text: "Create an API key",
+        detail: 'Click the link below to open the Credentials page. Click "+ Create Credentials" at the top, then select "API key". A dialog will appear with your new key — click the copy icon next to it.',
         linkUrl: "https://console.cloud.google.com/apis/credentials",
         linkText: "Go to Credentials",
       },
       {
-        text: "Copy the API key and paste it below",
+        text: "Paste your API key below",
+        detail: "Paste the key you just copied into the field below and click Save. You're all set!",
       },
     ],
     note: "Free for ~9,000 lookups/month with Google's $200 monthly credit. Results are cached for 30 days to minimize API usage.",
@@ -49,22 +54,26 @@ const setupInstructions: Record<string, ProviderSetup> = {
     steps: [
       {
         text: "Create a free TMDB account",
+        detail: "Click the link below and fill in the registration form. You'll need to verify your email address.",
         linkUrl: "https://www.themoviedb.org/signup",
         linkText: "Sign up at TMDB",
       },
       {
-        text: "Go to your API settings and request a Developer key",
+        text: "Request an API key",
+        detail: 'Click the link below, then click "Create" or "click here" under the Request an API Key section. Select "Developer" as the usage type and fill in the form (application name, URL, and description can be anything).',
         linkUrl: "https://www.themoviedb.org/settings/api",
         linkText: "Open API Settings",
       },
       {
-        text: 'Copy the API Read Access Token (the long one starting with "eyJ...")',
+        text: "Copy the API Read Access Token",
+        detail: 'On the same API settings page, scroll down to find the "API Read Access Token (v4 auth)" section. Copy the long token that starts with "eyJ..." — this is the one you need, not the shorter API Key above it.',
       },
       {
-        text: "Paste the token below",
+        text: "Paste your token below",
+        detail: "Paste the long token into the field below and click Save.",
       },
     ],
-    note: "Free for non-commercial use. Use the long API Read Access Token, not the shorter API Key.",
+    note: "Completely free for non-commercial use. No credit card required.",
   },
   allocine: {
     description: "Movies & TV shows on Netflix, Disney+, Canal+, Prime Video",
@@ -177,13 +186,26 @@ async function init(): Promise<void> {
 
       for (const step of setup.steps) {
         const li = document.createElement("li");
-        if (step.linkUrl && step.linkText) {
-          li.innerHTML =
-            `${step.text}<br>` +
-            `<a href="${step.linkUrl}" target="_blank">${step.linkText} &rarr;</a>`;
-        } else {
-          li.textContent = step.text;
+
+        const title = document.createElement("strong");
+        title.textContent = step.text;
+        li.appendChild(title);
+
+        if (step.detail) {
+          const detail = document.createElement("div");
+          detail.className = "step-detail";
+          detail.textContent = step.detail;
+          li.appendChild(detail);
         }
+
+        if (step.linkUrl && step.linkText) {
+          const link = document.createElement("a");
+          link.href = step.linkUrl;
+          link.target = "_blank";
+          link.innerHTML = `${step.linkText} &rarr;`;
+          li.appendChild(link);
+        }
+
         ol.appendChild(li);
       }
 
