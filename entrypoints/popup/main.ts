@@ -16,7 +16,6 @@ const saveBtn = document.getElementById("save") as HTMLButtonElement;
 const resetBtn = document.getElementById("reset") as HTMLButtonElement;
 const statusEl = document.getElementById("status")!;
 const openSettingsLink = document.getElementById("openSettings")!;
-const openSetupGuideLink = document.getElementById("openSetupGuide")!;
 const enableToggle = document.getElementById("enableToggle") as HTMLInputElement;
 const siteWarningEl = document.getElementById("siteWarning")!;
 
@@ -58,10 +57,6 @@ openSettingsLink.addEventListener("click", (e) => {
   chrome.runtime.openOptionsPage();
 });
 
-openSetupGuideLink.addEventListener("click", (e) => {
-  e.preventDefault();
-  chrome.tabs.create({ url: chrome.runtime.getURL("/onboarding.html") });
-});
 
 // ── Detect active tab's site and show only relevant providers ──
 
