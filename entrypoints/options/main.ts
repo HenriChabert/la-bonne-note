@@ -9,8 +9,15 @@ const statusEl = document.getElementById("status")!;
 
 const apiKeyInputs: Map<string, HTMLInputElement> = new Map();
 
-const helpLinks: Record<string, string> = {
-  placesApiKey: "https://console.cloud.google.com/apis/credentials",
+const helpLinks: Record<string, { text: string; url: string }> = {
+  placesApiKey: {
+    text: "3 steps: Create project \u2192 Enable API \u2192 Create key.",
+    url: chrome.runtime.getURL("/onboarding.html#google-maps"),
+  },
+  tmdbApiKey: {
+    text: "Create free account \u2192 Copy API token.",
+    url: chrome.runtime.getURL("/onboarding.html#tmdb"),
+  },
 };
 
 for (const provider of providersMeta) {
@@ -47,11 +54,11 @@ for (const provider of providersMeta) {
     field.appendChild(label);
     field.appendChild(wrapper);
 
-    const helpUrl = helpLinks[provider.apiKeySettingName];
-    if (helpUrl) {
+    const help = helpLinks[provider.apiKeySettingName];
+    if (help) {
       const hint = document.createElement("div");
       hint.className = "hint";
-      hint.innerHTML = `Get your key from <a href="${helpUrl}" target="_blank">Google Cloud Console</a>`;
+      hint.innerHTML = `${help.text} <a href="${help.url}" target="_blank">Full guide &rarr;</a>`;
       field.appendChild(hint);
     }
 

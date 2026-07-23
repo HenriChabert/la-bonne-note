@@ -29,6 +29,13 @@ export default defineBackground(async () => {
 
   log.info("Background started", { providers: providers.map((p) => p.id) });
 
+  // Open onboarding page on first install
+  chrome.runtime.onInstalled.addListener((details) => {
+    if (details.reason === "install") {
+      chrome.tabs.create({ url: chrome.runtime.getURL("/onboarding.html") });
+    }
+  });
+
   // Set initial icon state
   const { lbnEnabled } = await chrome.storage.sync.get("lbnEnabled");
   updateIcon(lbnEnabled !== false);

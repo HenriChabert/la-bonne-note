@@ -10,13 +10,12 @@ Google Maps ratings are shown on food delivery platforms (Deliveroo, Uber Eats, 
 
 ### Getting your API key
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project (or select an existing one)
-3. Navigate to **APIs & Services > Library**
-4. Search for **Places API (New)** and enable it
-5. Go to **APIs & Services > Credentials**
-6. Click **Create Credentials > API key**
-7. Copy the key
+1. [Create a Google Cloud project](https://console.cloud.google.com/projectcreate) (or select an existing one)
+2. [Enable the Places API (New)](https://console.cloud.google.com/apis/library/places-backend.googleapis.com) in your project
+3. [Create an API key](https://console.cloud.google.com/apis/credentials) via **Create Credentials > API key**
+4. Copy the key
+
+> **Tip:** The extension includes a step-by-step setup guide — click "Setup guide" in the popup footer or open the onboarding page after install.
 
 ### Recommended restrictions
 
