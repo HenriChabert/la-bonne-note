@@ -127,7 +127,7 @@ async function init(): Promise<void> {
     // ── Header ──
     const header = document.createElement("div");
     header.className = "card-header";
-    header.setAttribute("aria-expanded", isFree ? "false" : String(!hasKey));
+    header.setAttribute("aria-expanded", "false");
 
     const iconDiv = document.createElement("div");
     iconDiv.className = "card-icon";
@@ -168,7 +168,7 @@ async function init(): Promise<void> {
     // ── Body ──
     const body = document.createElement("div");
     body.className = "card-body";
-    if (!hasKey && !isFree) body.classList.add("open");
+    // All cards start collapsed; status badge shows config state at a glance
 
     if (setup.freeNotice) {
       const notice = document.createElement("div");
